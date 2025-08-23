@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "test": "elm-test-rs",
+    "manualTest": "elm-test-rs tests/**/*Manual.elm"
+  },
+  "dependencies": {
+    "elm-test-rs": "^3.0.1-0"
+  }
+}
