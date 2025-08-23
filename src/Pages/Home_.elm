@@ -2,7 +2,7 @@ module Pages.Home_ exposing (Model, Msg, page)
 
 import Effect exposing (Effect)
 import Html exposing (Html, button, div, h1, h2, input, label, span, text)
-import Html.Attributes as Attr exposing (class, disabled, step, type_, value)
+import Html.Attributes as Attr exposing (class, classList, disabled, step, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Page exposing (Page)
 import Poker.Cards as Cards exposing (Card, Rank(..), Suit(..))
@@ -251,11 +251,15 @@ subscriptions model =
 
 view : Model -> View Msg
 view model =
+    let
+        hasStartedGame =
+            List.length model.holeCards > 0
+    in
     { title = "PokerChance - Live Odds Calculator"
     , body =
         [ div [ class "poker-calculator" ]
-            [ headerSection
-            , playerCountSection model
+            [ headerSection hasStartedGame
+            , playerCountSection model hasStartedGame
             , cardEntrySection model
             , oddsSection model
             , actionButtonsSection model
@@ -264,17 +268,27 @@ view model =
     }
 
 
-headerSection : Html Msg
-headerSection =
-    div [ class "header" ]
+headerSection : Bool -> Html Msg
+headerSection hasStartedGame =
+    div
+        [ classList
+            [ ( "header", True )
+            , ( "header--mobile-hidden", hasStartedGame )
+            ]
+        ]
         [ h1 [ class "title" ] [ text "🃏 PokerChance" ]
         , div [ class "subtitle" ] [ text "Live Texas Hold'em Odds Calculator" ]
         ]
 
 
-playerCountSection : Model -> Html Msg
-playerCountSection model =
-    div [ class "player-count-section" ]
+playerCountSection : Model -> Bool -> Html Msg
+playerCountSection model hasStartedGame =
+    div
+        [ classList
+            [ ( "player-count-section", True )
+            , ( "player-count-section--mobile-hidden", hasStartedGame )
+            ]
+        ]
         [ label [ class "player-count-label" ] [ text "Number of Players" ]
         , div [ class "player-count-controls" ]
             [ input
@@ -309,7 +323,11 @@ cardEntrySection model =
             , div [ class "cards-needed" ] [ text (getCardsNeededText model.gameStage model) ]
             ]
         , currentCardsDisplay model
-        , cardSelector model
+        , if needsCardSelection model then
+            cardSelector model
+
+          else
+            text ""
         ]
 
 
@@ -374,6 +392,27 @@ getCardsNeededText stage model =
 
         _ ->
             ""
+
+
+{-| Determine if card selection interface should be shown
+-}
+needsCardSelection : Model -> Bool
+needsCardSelection model =
+    case model.gameStage of
+        SelectingHoleCards ->
+            List.length model.holeCards < 2
+
+        SelectingFlop ->
+            List.length model.communityCards < 3
+
+        SelectingTurn ->
+            List.length model.communityCards < 4
+
+        SelectingRiver ->
+            List.length model.communityCards < 5
+
+        _ ->
+            False
 
 
 currentCardsDisplay : Model -> Html Msg

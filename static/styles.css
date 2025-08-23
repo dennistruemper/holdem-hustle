@@ -594,3 +594,37 @@ button:active:not(:disabled) {
     margin-left: 24px;
   }
 }
+
+/* === RESPONSIVE UI DECLUTTERING === */
+
+/* Hide header and player count on mobile after game starts */
+@media (max-width: 768px) {
+  .header--mobile-hidden {
+    display: none;
+  }
+
+  .player-count-section--mobile-hidden {
+    display: none;
+  }
+}
+
+/* Keep header and player count visible on desktop always */
+@media (min-width: 769px) {
+  .header--mobile-hidden {
+    display: block;
+  }
+
+  .player-count-section--mobile-hidden {
+    display: block;
+  }
+
+  /* Add some visual indication that they're still interactive on desktop */
+  .player-count-section--mobile-hidden {
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+  }
+
+  .player-count-section--mobile-hidden:hover {
+    opacity: 1;
+  }
+}
