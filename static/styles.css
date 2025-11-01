@@ -52,7 +52,7 @@ body {
   font-weight: 500;
 }
 
-/* === PLAYER COUNT SECTION === */
+/* === PLAYER COUNT & BLIND SECTION === */
 .player-count-section {
   background: #1e293b;
   border: 2px solid #334155;
@@ -121,6 +121,44 @@ body {
   font-size: 1.2rem;
   color: #cbd5e1;
   margin-left: 8px;
+}
+
+/* Blind Controls */
+.blind-controls {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #334155;
+}
+
+.blind-label {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  margin-bottom: 8px;
+}
+
+.blind-input {
+  width: 100%;
+  padding: 12px 16px;
+  background: #334155;
+  border: 2px solid #475569;
+  border-radius: 8px;
+  color: #f8fafc;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.blind-input:focus {
+  outline: none;
+  border-color: #ffd700;
+  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.2);
+}
+
+.blind-input::placeholder {
+  color: #64748b;
 }
 
 .folded-info {
@@ -570,9 +608,45 @@ button:active:not(:disabled) {
 
 @media (min-width: 768px) {
   .poker-calculator {
-    max-width: 500px;
+    max-width: 1200px; /* Much wider for desktop */
     margin: 0 auto;
     padding: 32px;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two-column layout */
+    grid-template-rows: auto auto 1fr auto;
+    gap: 32px;
+    grid-template-areas:
+      "header header"
+      "player-count cards"
+      "odds pot-odds"
+      "actions actions";
+  }
+
+  .header {
+    grid-area: header;
+    border-bottom: 2px solid #334155;
+    margin-bottom: 0;
+  }
+
+  .player-count-section {
+    grid-area: player-count;
+  }
+
+  .card-entry-section {
+    grid-area: cards;
+  }
+
+  .odds-section {
+    grid-area: odds;
+  }
+
+  .pot-odds-section {
+    grid-area: pot-odds;
+  }
+
+  .action-buttons-section {
+    grid-area: actions;
+    grid-column: 1 / -1; /* Span full width */
   }
 
   .suit-buttons {
@@ -626,5 +700,462 @@ button:active:not(:disabled) {
 
   .player-count-section--mobile-hidden:hover {
     opacity: 1;
+  }
+}
+
+/* === POT ODDS CALCULATOR === */
+
+.pot-size-info {
+  background: #334155;
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.auto-pot-indicator {
+  font-size: 0.9rem;
+  color: #10b981;
+  font-weight: 500;
+}
+
+.pot-odds-section {
+  background: rgba(51, 65, 85, 0.8);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 16px 0;
+  border: 1px solid #475569;
+}
+
+.pot-odds-title {
+  color: #ffd700;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.pot-odds-inputs {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.input-group {
+  flex: 1;
+  min-width: 140px;
+}
+
+.input-label {
+  display: block;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+
+.pot-input,
+.bet-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #475569;
+  border-radius: 8px;
+  background: #1e293b;
+  color: #f8fafc;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.pot-input:focus,
+.bet-input:focus {
+  outline: none;
+  border-color: #ffd700;
+  box-shadow: 0 0 0 2px rgba(255, 215, 0, 0.2);
+}
+
+.pot-odds-display {
+  background: rgba(30, 41, 59, 0.8);
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid #334155;
+}
+
+.pot-odds-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.pot-odds-row:last-child {
+  margin-bottom: 0;
+}
+
+.pot-odds-item {
+  flex: 1;
+  text-align: center;
+  padding: 8px;
+  border-radius: 6px;
+  background: rgba(71, 85, 105, 0.3);
+}
+
+.pot-odds-item.ev-positive {
+  background: rgba(34, 197, 94, 0.2);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.pot-odds-item.ev-negative {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.pot-odds-label {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.pot-odds-value {
+  font-size: 1.1rem;
+  color: #f8fafc;
+  font-weight: 600;
+}
+
+.ev-positive .pot-odds-value {
+  color: #22c55e;
+}
+
+.ev-negative .pot-odds-value {
+  color: #ef4444;
+}
+
+.recommendation {
+  margin-top: 16px;
+  text-align: center;
+}
+
+.recommendation-text {
+  display: inline-block;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.recommendation-text.call {
+  background: rgba(34, 197, 94, 0.2);
+  color: #22c55e;
+  border: 2px solid #22c55e;
+}
+
+.recommendation-text.fold {
+  background: rgba(239, 68, 68, 0.2);
+  color: #ef4444;
+  border: 2px solid #ef4444;
+}
+
+.pot-odds-placeholder {
+  text-align: center;
+  color: #64748b;
+  font-style: italic;
+  padding: 20px;
+}
+
+/* Mobile adjustments for pot odds */
+@media (max-width: 768px) {
+  .pot-odds-inputs {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .pot-odds-row {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .pot-odds-item {
+    margin-bottom: 8px;
+  }
+}
+
+/* === MODAL CARD SELECTION === */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 90vw;
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 2px solid #ffd700;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #475569;
+  padding-bottom: 16px;
+}
+
+.modal-title {
+  color: #ffd700;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  font-size: 2rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background: rgba(255, 215, 0, 0.1);
+  color: #ffd700;
+}
+
+.modal-body {
+  min-width: 320px;
+}
+
+.card-selection-step {
+  margin-bottom: 24px;
+}
+
+.step-title {
+  color: #f8fafc;
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+/* Open Card Modal Button */
+.open-card-modal-btn {
+  width: 100%;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #ffd700 0%, #f59e0b 100%);
+  color: #1e293b;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+.open-card-modal-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
+}
+
+/* Suit Buttons in Modal */
+.suit-buttons-modal {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.suit-button-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 12px;
+  border: 2px solid #475569;
+  border-radius: 12px;
+  background: rgba(71, 85, 105, 0.2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.suit-button-modal:hover {
+  border-color: #ffd700;
+  background: rgba(255, 215, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.suit-button-modal.red {
+  color: #ef4444;
+}
+
+.suit-button-modal.black {
+  color: #f8fafc;
+}
+
+.suit-symbol-large {
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+}
+
+.suit-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.key-hint {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  background: rgba(255, 215, 0, 0.9);
+  color: #1e293b;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+/* Rank Buttons in Modal */
+.rank-buttons-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rank-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.rank-button-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 8px;
+  border: 2px solid #475569;
+  border-radius: 8px;
+  background: rgba(71, 85, 105, 0.2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  min-height: 60px;
+}
+
+.rank-button-modal:hover:not(:disabled) {
+  border-color: #ffd700;
+  background: rgba(255, 215, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.rank-button-modal:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  background: rgba(239, 68, 68, 0.2);
+  border-color: #ef4444;
+}
+
+.rank-button-modal.red {
+  color: #ef4444;
+}
+
+.rank-button-modal.black {
+  color: #f8fafc;
+}
+
+.rank-symbol {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+/* Keyboard Hints */
+.keyboard-hints {
+  background: rgba(30, 41, 59, 0.6);
+  border-radius: 8px;
+  padding: 16px;
+  border: 1px solid #334155;
+}
+
+.hint {
+  color: #ffd700;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.hint-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 6px;
+  font-size: 0.8rem;
+}
+
+.hint-key {
+  background: rgba(255, 215, 0, 0.2);
+  color: #ffd700;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: "Courier New", monospace;
+  font-weight: 600;
+  margin-right: 12px;
+  min-width: 80px;
+  text-align: center;
+}
+
+.hint-desc {
+  color: #cbd5e1;
+}
+
+/* Mobile Modal Adjustments */
+@media (max-width: 768px) {
+  .modal-content {
+    margin: 16px;
+    padding: 20px;
+    max-width: calc(100vw - 32px);
+  }
+
+  .suit-buttons-modal {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .rank-row {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 6px;
+  }
+
+  .rank-button-modal {
+    padding: 10px 6px;
+    min-height: 50px;
+  }
+
+  .rank-symbol {
+    font-size: 1.2rem;
+  }
+
+  .suit-symbol-large {
+    font-size: 2rem;
   }
 }
