@@ -22,13 +22,13 @@ RUN npx elm-tooling install
 RUN npx elm-land build
 
 # Production stage
-FROM httpd:alpine
+FROM busybox:latest
 
 # Copy the built static files from the builder stage
-COPY --from=builder /app/dist/ /usr/local/apache2/htdocs/
+COPY --from=builder /app/dist/ /www/
 
 # Expose port 80
 EXPOSE 80
 
 # httpd:alpine runs httpd in the foreground by default
-CMD ["httpd", "-D", "FOREGROUND"]
+CMD ["httpd", "-f", "-v", "-p", "80", "-h", "/www"]
