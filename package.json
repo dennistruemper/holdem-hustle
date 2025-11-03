@@ -1,9 +1,11 @@
 {
   "scripts": {
-    "test": "elm-test-rs",
-    "manualTest": "elm-test-rs tests/**/*Manual.elm"
+    "test": "npx elm-test-rs",
+    "manualTest": "npx elm-test-rs tests/**/*Manual.elm"
   },
-  "dependencies": {
-    "elm-test-rs": "^3.0.1-0"
+  "dependencies": {},
+  "devDependencies": {
+    "elm-land": "^0.20.1",
+    "elm-tooling": "^1.16.0"
   }
 }
