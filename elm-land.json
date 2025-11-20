@@ -10,11 +10,26 @@
         "html": { "lang": "en" },
         "head": {}
       },
-      "title": "Elm Land",
+      "title": "Holdemhustle",
       "meta": [
         { "charset": "UTF-8" },
         { "http-equiv": "X-UA-Compatible", "content": "IE=edge" },
-        { "name": "viewport", "content": "width=device-width, initial-scale=1.0" }
+        {
+          "name": "viewport",
+          "content": "width=device-width, initial-scale=1.0"
+        },
+        { "property": "og:title", "content": "Holdemhustle" },
+        {
+          "property": "og:description",
+          "content": "Poker odds calculator and probability game"
+        },
+        { "property": "og:type", "content": "website" },
+        { "name": "twitter:card", "content": "summary" },
+        { "name": "twitter:title", "content": "Holdemhustle" },
+        {
+          "name": "twitter:description",
+          "content": "Poker odds calculator and probability game"
+        }
       ],
       "link": [],
       "script": []
