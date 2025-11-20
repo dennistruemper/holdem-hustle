@@ -22,13 +22,25 @@ RUN npx elm-tooling install
 RUN npx elm-land build
 
 # Production stage
-FROM busybox:latest
+FROM nginx:alpine
 
 # Copy the built static files from the builder stage
-COPY --from=builder /app/dist/ /www/
+COPY --from=builder /app/dist/ /usr/share/nginx/html/
+
+# Create nginx configuration for SPA routing
+# This ensures all routes serve index.html (for client-side routing)
+RUN echo 'server { \
+    listen 80; \
+    server_name _; \
+    root /usr/share/nginx/html; \
+    index index.html; \
+    location / { \
+    try_files $uri $uri/ /index.html; \
+    } \
+    }' > /etc/nginx/conf.d/default.conf
 
 # Expose port 80
 EXPOSE 80
 
-# httpd:alpine runs httpd in the foreground by default
-CMD ["httpd", "-f", "-v", "-p", "80", "-h", "/www"]
+# nginx runs in the foreground by default
+CMD ["nginx", "-g", "daemon off;"]
