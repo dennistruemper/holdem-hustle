@@ -1265,40 +1265,126 @@ button:active:not(:disabled) {
 
 .range-controls {
   display: flex;
-  gap: 16px;
-  align-items: center;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.range-input-group {
+.range-slider-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  flex: 1;
+  gap: 12px;
 }
 
-.range-input {
-  padding: 10px;
-  background: #1e293b;
-  border: 2px solid #334155;
-  border-radius: 6px;
-  color: #f8fafc;
+.range-slider-label {
   font-size: 1rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin-bottom: 4px;
+}
+
+.range-slider-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   width: 100%;
 }
 
-.range-input:focus {
+.range-button {
+  min-width: 44px;
+  height: 44px;
+  padding: 0;
+  background: #334155;
+  border: 2px solid #475569;
+  border-radius: 8px;
+  color: #f8fafc;
+  font-size: 1.5rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.range-button:hover:not(:disabled) {
+  background: #475569;
+  border-color: #64748b;
+  transform: scale(1.05);
+}
+
+.range-button:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.range-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.range-slider {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: #475569;
   outline: none;
-  border-color: #ffd700;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.range-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #10b981;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+  transition: all 0.2s ease;
+}
+
+.range-slider::-webkit-slider-thumb:hover {
+  background: #059669;
+  transform: scale(1.1);
+  box-shadow: 0 3px 12px rgba(16, 185, 129, 0.6);
+}
+
+.range-slider::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #10b981;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+  transition: all 0.2s ease;
+}
+
+.range-slider::-moz-range-thumb:hover {
+  background: #059669;
+  transform: scale(1.1);
+  box-shadow: 0 3px 12px rgba(16, 185, 129, 0.6);
+}
+
+.range-value {
+  min-width: 32px;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #ffd700;
+  flex-shrink: 0;
 }
 
 .range-display {
-  padding: 10px;
+  padding: 12px;
   background: rgba(255, 215, 0, 0.1);
   border: 1px solid rgba(255, 215, 0, 0.3);
-  border-radius: 6px;
+  border-radius: 8px;
   color: #ffd700;
   font-weight: 600;
+  font-size: 1.1rem;
   text-align: center;
+  margin-top: 8px;
 }
 
 .radio-group {
@@ -1897,8 +1983,18 @@ button:active:not(:disabled) {
     width: 100%;
   }
 
-  .range-controls {
-    flex-direction: column;
-    gap: 12px;
+  .range-slider-container {
+    gap: 10px;
+  }
+
+  .range-button {
+    min-width: 40px;
+    height: 40px;
+    font-size: 1.3rem;
+  }
+
+  .range-value {
+    min-width: 28px;
+    font-size: 1.1rem;
   }
 }

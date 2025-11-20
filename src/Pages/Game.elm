@@ -3,7 +3,7 @@ module Pages.Game exposing (Model, Msg, page)
 import Array
 import Effect exposing (Effect)
 import Html exposing (Html, button, div, h1, h2, h3, input, label, span, text)
-import Html.Attributes as Attr exposing (class, classList, disabled, id, step, type_, value)
+import Html.Attributes as Attr exposing (class, classList, disabled, id, min, step, type_, value)
 import Html.Events exposing (onClick, onInput)
 import Page exposing (Page)
 import Poker.Cards as Cards exposing (Card, Rank(..), Suit(..))
@@ -49,8 +49,12 @@ type KnownCardsConfig
 
 
 type Msg
-    = SetGamePlayerCountMin String
-    | SetGamePlayerCountMax String
+    = IncrementMin
+    | DecrementMin
+    | IncrementMax
+    | DecrementMax
+    | SetMinSlider String
+    | SetMaxSlider String
     | SetKnownCardsConfig KnownCardsConfig
     | StartGame
     | SetPlayerGuess String
@@ -248,38 +252,50 @@ swapArrayElements i j array =
 update : Msg -> Model -> ( Model, Effect Msg )
 update msg model =
     case msg of
-        SetGamePlayerCountMin countStr ->
+        IncrementMin ->
+            let
+                newMin = clamp 2 8 (model.gamePlayerCountMin + 1)
+                adjustedMax = if newMin > model.gamePlayerCountMax then newMin else model.gamePlayerCountMax
+            in
+            ( { model | gamePlayerCountMin = newMin, gamePlayerCountMax = adjustedMax }, Effect.none )
+
+        DecrementMin ->
+            let
+                newMin = clamp 2 8 (model.gamePlayerCountMin - 1)
+            in
+            ( { model | gamePlayerCountMin = newMin }, Effect.none )
+
+        IncrementMax ->
+            let
+                newMax = clamp 2 8 (model.gamePlayerCountMax + 1)
+            in
+            ( { model | gamePlayerCountMax = newMax }, Effect.none )
+
+        DecrementMax ->
+            let
+                newMax = clamp 2 8 (model.gamePlayerCountMax - 1)
+                adjustedMin = if newMax < model.gamePlayerCountMin then newMax else model.gamePlayerCountMin
+            in
+            ( { model | gamePlayerCountMax = newMax, gamePlayerCountMin = adjustedMin }, Effect.none )
+
+        SetMinSlider countStr ->
             case String.toInt countStr of
                 Just count ->
                     let
-                        clampedCount =
-                            clamp 2 8 count
-
-                        adjustedMax =
-                            if clampedCount > model.gamePlayerCountMax then
-                                clampedCount
-
-                            else
-                                model.gamePlayerCountMax
+                        clampedCount = clamp 2 8 count
+                        adjustedMax = if clampedCount > model.gamePlayerCountMax then clampedCount else model.gamePlayerCountMax
                     in
                     ( { model | gamePlayerCountMin = clampedCount, gamePlayerCountMax = adjustedMax }, Effect.none )
 
                 Nothing ->
                     ( model, Effect.none )
 
-        SetGamePlayerCountMax countStr ->
+        SetMaxSlider countStr ->
             case String.toInt countStr of
                 Just count ->
                     let
-                        clampedCount =
-                            clamp 2 8 count
-
-                        adjustedMin =
-                            if clampedCount < model.gamePlayerCountMin then
-                                clampedCount
-
-                            else
-                                model.gamePlayerCountMin
+                        clampedCount = clamp 2 8 count
+                        adjustedMin = if clampedCount < model.gamePlayerCountMin then clampedCount else model.gamePlayerCountMin
                     in
                     ( { model | gamePlayerCountMax = clampedCount, gamePlayerCountMin = adjustedMin }, Effect.none )
 
@@ -467,29 +483,59 @@ gameSettingsSection model =
             [ div [ class "setting-group" ]
                 [ label [ class "setting-label" ] [ text "Player Count Range" ]
                 , div [ class "range-controls" ]
-                    [ div [ class "range-input-group" ]
-                        [ label [] [ text "From:" ]
-                        , input
-                            [ type_ "number"
-                            , Attr.min "2"
-                            , Attr.max "8"
-                            , value (String.fromInt model.gamePlayerCountMin)
-                            , onInput SetGamePlayerCountMin
-                            , class "range-input"
+                    [ div [ class "range-slider-group" ]
+                        [ label [ class "range-slider-label" ] [ text "From:" ]
+                        , div [ class "range-slider-container" ]
+                            [ button
+                                [ class "range-button range-button--decrement"
+                                , onClick DecrementMin
+                                , disabled (model.gamePlayerCountMin <= 2)
+                                ]
+                                [ text "−" ]
+                            , input
+                                [ type_ "range"
+                                , Attr.min "2"
+                                , Attr.max "8"
+                                , value (String.fromInt model.gamePlayerCountMin)
+                                , onInput SetMinSlider
+                                , class "range-slider"
+                                ]
+                                []
+                            , button
+                                [ class "range-button range-button--increment"
+                                , onClick IncrementMin
+                                , disabled (model.gamePlayerCountMin >= 8 || model.gamePlayerCountMin >= model.gamePlayerCountMax)
+                                ]
+                                [ text "+" ]
+                            , span [ class "range-value" ] [ text (String.fromInt model.gamePlayerCountMin) ]
                             ]
-                            []
                         ]
-                    , div [ class "range-input-group" ]
-                        [ label [] [ text "To:" ]
-                        , input
-                            [ type_ "number"
-                            , Attr.min "2"
-                            , Attr.max "8"
-                            , value (String.fromInt model.gamePlayerCountMax)
-                            , onInput SetGamePlayerCountMax
-                            , class "range-input"
+                    , div [ class "range-slider-group" ]
+                        [ label [ class "range-slider-label" ] [ text "To:" ]
+                        , div [ class "range-slider-container" ]
+                            [ button
+                                [ class "range-button range-button--decrement"
+                                , onClick DecrementMax
+                                , disabled (model.gamePlayerCountMax <= 2 || model.gamePlayerCountMax <= model.gamePlayerCountMin)
+                                ]
+                                [ text "−" ]
+                            , input
+                                [ type_ "range"
+                                , Attr.min "2"
+                                , Attr.max "8"
+                                , value (String.fromInt model.gamePlayerCountMax)
+                                , onInput SetMaxSlider
+                                , class "range-slider"
+                                ]
+                                []
+                            , button
+                                [ class "range-button range-button--increment"
+                                , onClick IncrementMax
+                                , disabled (model.gamePlayerCountMax >= 8)
+                                ]
+                                [ text "+" ]
+                            , span [ class "range-value" ] [ text (String.fromInt model.gamePlayerCountMax) ]
                             ]
-                            []
                         ]
                     ]
                 , div [ class "range-display" ]
